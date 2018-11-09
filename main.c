@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+
+#include "prototype.h"
+#include "source.c"
+
+
+
+int main(int argc,char* argv[]){ 
+
+ if(SDL_Init(SDL_INIT_VIDEO)<0){
+                                fprintf(stderr,"Erreur de chargement du mode video : %s",SDL_GetError());
+                                exit(EXIT_FAILURE);
+                               }
+ else
+     if(TTF_Init()==-1){
+                        fprintf(stderr,"Erreur de chargement du mode video : %s",SDL_GetError());
+                        exit(EXIT_FAILURE);
+                       }
+ 
+  ARBRE A=NULL;
+ 
+ ecran=SDL_SetVideoMode(1600,900,32,SDL_HWSURFACE | SDL_DOUBLEBUF ); //| SDL_RESIZABLE
+ SDL_FillRect(ecran,NULL,SDL_MapRGB(ecran->format,255,255,255));
+ SDL_WM_SetCaption("LES AVL !",NULL); 
+ SDL_Flip(ecran);
+
+ SDL_Delay(3000);
+ int i;
+ for(i=1;i<=10;i++){
+                   ajouterNoeud(i,&A,NULL,'d',1);
+                   SDL_FillRect(ecran,NULL,SDL_MapRGB(ecran->format,255,255,255));
+                   afficherArbre(A);
+                   SDL_Delay(3000);
+                  }
+ 
+ SDL_Event event;
+ int continuer=1;
+
+ while(continuer){
+                  SDL_WaitEvent(&event);
+                  switch(event.type)
+                  {
+                   case SDL_QUIT : continuer=0;
+                                   break;
+                   case SDL_MOUSEBUTTONUP :supprimerARBRE(&A,event.button.x,event.button.y);
+                                           SDL_FillRect(ecran,NULL,SDL_MapRGB(ecran->format,255,255,255));
+                                           afficherArbre(A); 
+                   }
+                 }
+
+ A=detruireArbre(A);
+ 
+ TTF_Quit();
+ SDL_Quit();  
+}
+
+
